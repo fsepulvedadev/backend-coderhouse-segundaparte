@@ -2,18 +2,6 @@ module.exports = class Contenedor {
   constructor(options, table) {
     this.knex = require("knex")(options);
     this.tabla = table;
-
-    this.knex.schema.hasTable("mensajes").then(function (exists) {
-      if (!exists) {
-        return this.knex.schema.createTable("mensajes", function (t) {
-          t.increments("id").primary();
-          t.string("autor", 100);
-          t.string("mensaje", 1000);
-          t.string("hora");
-          t.string("fecha");
-        });
-      }
-    });
   }
 
   traerPorId(id) {
@@ -29,7 +17,7 @@ module.exports = class Contenedor {
         throw err;
       })
       .finally(() => {
-        knex.destroy();
+        this.knex.destroy();
       });
   }
 
@@ -37,18 +25,31 @@ module.exports = class Contenedor {
     this.knex
       .from(this.tabla)
       .select("*")
-      .then((rows) => rows);
+      .then((rows) => {
+        let response = [];
+        for (let row of rows) {
+          response.push({
+            id: row["id"],
+            name: row["nombre"],
+            price: row["precio"],
+          });
+        }
+        console.log(response);
+        return response;
+      });
   }
 
   agregarProducto(item) {
+    console.log(item);
+
     let newItem = {
-      name: item.name,
-      price: item.price,
+      nombre: item.name,
+      precio: item.price,
       thumbnail: item.thumbnail,
     };
 
     this.knex(this.tabla)
-      .insert(newItem)
+      .insert({ nombre: item.name, precio: item.price, thumbnail: item.url })
       .then(() => {
         console.log("Producto agregado");
       })
@@ -57,7 +58,7 @@ module.exports = class Contenedor {
         throw err;
       })
       .finally(() => {
-        knex.destroy();
+        this.knex.destroy();
       });
   }
 
@@ -89,6 +90,6 @@ module.exports = class Contenedor {
         console.log(err);
         throw err;
       })
-      .finally(() => knex.destroy());
+      .finally(() => this.knex.destroy());
   }
 };

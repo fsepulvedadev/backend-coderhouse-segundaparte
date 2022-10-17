@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/productos", (req, res) => {
-  res.send(contenedorProductos.traerTodo());
+  res.send(JSON.stringify(contenedorProductos.traerTodo()));
 });
 const fecha = new Date();
 const mensajes = [
@@ -42,22 +42,22 @@ const mensajes = [
   },
 ];
 
-/* io.on("connection", (socket) => {
+io.on("connection", (socket) => {
   console.log("se conecto un usuario");
-  socket.emit("productos", productos.getAllProducts());
+  socket.emit("productos", contenedorProductos.traerTodo());
   socket.emit("mensajes", mensajes);
   socket.on("new-product", (data) => {
-    productos.addProduct(data);
-    io.sockets.emit("productos", productos.getAllProducts());
+    contenedorProductos.agregarProducto(data);
+    io.sockets.emit("productos", contenedorProductos.traerTodo());
   });
   socket.on("new-mensaje", (mensaje) => {
     mensajes.push({
-      author: mensaje.author,
-      text: mensaje.text,
-      date: `${fecha.getDate()}/${fecha.getMonth()}/${fecha.getFullYear()}`,
-      hour: `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`,
+      autor: mensaje.author,
+      mensaje: mensaje.text,
+      fecha: `${fecha.getDate()}/${fecha.getMonth()}/${fecha.getFullYear()}`,
+      hora: `${fecha.getHours()}:${fecha.getMinutes()}:${fecha.getSeconds()}`,
     });
     io.sockets.emit("mensajes", mensajes);
   });
-}); */
+});
 httpServer.listen(8080, () => console.log("servidor Levantado"));

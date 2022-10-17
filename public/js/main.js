@@ -64,7 +64,7 @@ const render = (data, tipo) => {
 fetch("http://localhost:8080/productos")
   .then((res) => res.json())
   .then((data) => {
-    render(data);
+    render(data, "productos");
   })
   .catch((error) => console.log(error));
 
